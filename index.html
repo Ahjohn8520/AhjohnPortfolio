@@ -1,0 +1,453 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio - AHJOHN</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      text-align: center;
+    }
+
+    /* Header Section */
+    header {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: url('Image/background.png') center/cover no-repeat;
+      position: relative;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    header p {
+      font-size: 1rem;
+      margin: 10px 0;
+    }
+
+    header a {
+      color: #333;
+      text-decoration: none;
+    }
+
+    /* Navigation */
+    nav {
+      position: sticky;
+      top: 0;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px 0;
+      z-index: 100;
+    }
+
+    nav a {
+      margin: 0 20px;
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    nav a:hover {
+      color: #777;
+    }
+
+    /* Portfolio Sections */
+    section {
+      padding: 50px 20px;
+      min-height: 100vh;
+      scroll-margin-top: 100px; /* Adjust this value to match your nav height */
+    }
+
+    section h2 {
+      font-size: 2rem;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+    }
+
+    .gallery {
+      column-count: 6;
+      column-gap: 15px;      /* Set gap between columns to 15px */
+      max-width: 1800px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .gallery img {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 15px;   /* Set gap below each image to 15px */
+      border-radius: 8px;
+      transition: transform 0.3s cubic-bezier(.4,2,.6,1), box-shadow 0.3s;
+      background: none;
+      display: block;
+      break-inside: avoid;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.15);
+      z-index: 2;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    }
+
+    @media (max-width: 1600px) {
+      .gallery {
+        column-count: 5;
+        max-width: 1400px;
+      }
+    }
+    @media (max-width: 1200px) {
+      .gallery {
+        column-count: 4;
+        max-width: 1200px;
+      }
+    }
+    @media (max-width: 900px) {
+      .gallery {
+        column-count: 2;
+        max-width: 700px;
+      }
+    }
+    @media (max-width: 600px) {
+      .gallery {
+        column-count: 1;
+        padding: 0 10px;
+        max-width: 100%;
+      }
+      .gallery img {
+        margin-bottom: 16px;
+      }
+    }
+
+    /* About Me Section */
+    #about {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: left;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    footer {
+      padding: 20px;
+      background-color: #ddd;
+      font-size: 0.9rem;
+    }
+
+    /* Hero Split Layout */
+    .hero-split {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      background: #fff;
+      position: relative;
+    }
+
+    .hero-vertical-nav {
+      width: 60px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      border-right: 1px solid #eee;
+      padding-top: 40px;
+      z-index: 2;
+    }
+    .hero-vertical-nav nav {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+    .hero-vertical-nav a {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+      letter-spacing: 2px;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .hero-vertical-nav a:hover {
+      color: #777;
+    }
+
+    .hero-left {
+      width: 40vw;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding-left: 80px;
+      position: relative;
+    }
+    .hero-title {
+      font-size: 6vw;
+      font-weight: bold;
+      line-height: 0.9;
+      background: url('Image/background.png') center/cover no-repeat;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: transparent;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      margin-bottom: 5px; /* Reduced from 30px */
+    }
+    .hero-title .take {
+      display: block;
+    }
+    .hero-title .control {
+      display: block;
+    }
+    .hero-subtitle {
+      font-size: 1.1rem;
+      letter-spacing: 0.2em;
+      color: #888;
+      margin-bottom: 18px;
+      margin-top: -30; /* Ensure no extra space above */
+    }
+    .hero-desc {
+      font-size: 0.95rem;
+      color: #555;
+      letter-spacing: 0.1em;
+      margin-bottom: 40px;
+    }
+    .hero-right {
+      width: 60vw;
+      background: url('Image/background.png') center/cover no-repeat;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: flex-start;
+    }
+    @media (max-width: 900px) {
+      .hero-split {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+      }
+      .hero-vertical-nav {
+        flex-direction: row;
+        width: 100vw;
+        height: 50px;
+        border-right: none;
+        border-bottom: 1px solid #eee;
+        padding-top: 0;
+        justify-content: center;
+        align-items: center;
+      }
+      .hero-vertical-nav nav {
+        flex-direction: row;
+        gap: 20px;
+      }
+      .hero-vertical-nav a {
+        writing-mode: horizontal-tb;
+        transform: none;
+        font-size: 0.9rem;
+      }
+      .hero-left, .hero-right {
+        width: 100vw;
+        min-height: 50vh;
+        padding-left: 0;
+        align-items: center;
+        text-align: center;
+      }
+      .hero-title {
+        font-size: 10vw;
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero-split">
+    <aside class="hero-vertical-nav">
+      <nav>
+        <a href="#home">HOME</a>
+        <a href="#results">RESULTS</a>
+        <a href="#what-is-forex">WHAT IS FOREX</a>
+        <a href="#about">ABOUT</a>
+      </nav>
+    </aside>
+    <section class="hero-left">
+      <div class="hero-title">
+        <span class="take">AHJOHN</span><br>
+        <!-- <span class="control">CONTROL</span> -->
+      </div>
+      <div class="hero-subtitle">HONG KONG PHOTOGRAPHER</div>
+      <!-- <div class="hero-desc">FOREX TRADERS</div> -->
+    </section>
+    <section class="hero-right">
+    </section>
+  </div>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#photography">Photographic Works</a>
+    <a href="#3d-modeling">3D Modeling</a>
+    <a href="#uxui">UXUI Design</a>
+    <a href="#generative-ai">Generative AI</a>
+    <a href="#about">About Me</a>
+  </nav>
+
+  <!-- Photographic Works Section -->
+  <section id="photography">
+    <h2>Photographic Works</h2>
+    <div style="margin-bottom:20px; display:none;">
+      <label for="image-limit">Number of images to show: </label>
+      <input type="number" id="image-limit" min="1" max="100" value="200" style="width:60px;">
+      <button onclick="updateGallery()">Show</button>
+    </div>
+    <div class="gallery" id="photo-gallery"></div>
+    <script>
+      const imageFolder = "Image/PSW/";
+      const imageExt = ".png"; // Change if your images use a different extension
+      const maxImages = 100; // Set this to the actual number of images you have
+
+      function renderGallery(count) {
+        const gallery = document.getElementById("photo-gallery");
+        gallery.innerHTML = "";
+        for (let i = 1; i <= count; i++) {
+          const num = i.toString().padStart(2, '0');
+          const img = document.createElement("img");
+          img.src = imageFolder + num + imageExt;
+          img.alt = "Photography " + i;
+          img.onerror = function() { this.style.display = "none"; };
+          gallery.appendChild(img);
+        }
+      }
+
+      function updateGallery() {
+        let count = parseInt(document.getElementById("image-limit").value, 10);
+        if (isNaN(count) || count < 1) count = 1;
+        if (count > maxImages) count = maxImages;
+        renderGallery(count);
+      }
+
+      // Initial render
+      renderGallery(parseInt(document.getElementById("image-limit").value, 10));
+    </script>
+  </section>
+
+  <!-- 3D Modeling Section -->
+  <section id="3d-modeling">
+    <h2>3D Modeling</h2>
+    <div class="gallery">
+      <img src="https://via.placeholder.com/300x200.png?text=3D+Model+1" alt="3D Model 1">
+      <img src="https://via.placeholder.com/300x200.png?text=3D+Model+2" alt="3D Model 2">
+      <img src="https://via.placeholder.com/300x200.png?text=3D+Model+3" alt="3D Model 3">
+      <img src="https://via.placeholder.com/300x200.png?text=3D+Model+4" alt="3D Model 4">
+    </div>
+  </section>
+
+  <!-- UXUI Design Section -->
+  <section id="uxui">
+    <h2>UXUI Design</h2>
+    <div class="gallery">
+      <img src="https://via.placeholder.com/300x200.png?text=UXUI+1" alt="UXUI 1">
+      <img src="https://via.placeholder.com/300x200.png?text=UXUI+2" alt="UXUI 2">
+      <img src="https://via.placeholder.com/300x200.png?text=UXUI+3" alt="UXUI 3">
+      <img src="https://via.placeholder.com/300x200.png?text=UXUI+4" alt="UXUI 4">
+    </div>
+  </section>
+
+  <!-- Generative AI Section -->
+  <section id="generative-ai">
+    <h2>Generative AI</h2>
+    <div class="gallery">
+      <img src="https://via.placeholder.com/300x200.png?text=AI+Art+1" alt="Generative AI 1">
+      <img src="https://via.placeholder.com/300x200.png?text=AI+Art+2" alt="Generative AI 2">
+      <img src="https://via.placeholder.com/300x200.png?text=AI+Art+3" alt="Generative AI 3">
+      <img src="https://via.placeholder.com/300x200.png?text=AI+Art+4" alt="Generative AI 4">
+    </div>
+  </section>
+
+  <!-- About Me Section -->
+  <section id="about">
+    <h2>About Me</h2>
+    <p>
+      Hi, I'm Pawel Danielak, a passionate photographer, 3D artist, UX/UI designer, and generative AI enthusiast. 
+      I specialize in capturing the beauty of the world through my lens, creating immersive 3D models, designing intuitive user experiences, 
+      and exploring the possibilities of AI-generated art. Based in [Your Location], I’m always looking for new creative challenges. 
+      Feel free to reach out via Instagram or my website!
+    </p>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 AHJOHN. All rights reserved.</p>
+  </footer>
+  <!-- Smooth Scroll Script -->
+  <script>
+    document.querySelectorAll('nav a').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        // Only handle valid section links
+        if (href && href.startsWith('#') && href.length > 1) {
+          e.preventDefault();
+          const section = document.querySelector(href);
+          if (section) {
+            section.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
