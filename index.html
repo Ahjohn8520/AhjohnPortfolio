@@ -59,7 +59,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background: url('Image/background.png') center/cover no-repeat;
+      background: url('Image/background02.png') center/cover no-repeat;
       position: relative;
     }
 
@@ -239,7 +239,7 @@
       font-size: 6vw;
       font-weight: bold;
       line-height: 0.9;
-      background: url('Image/background.png') center/cover no-repeat;
+      background: url('Image/background02.png') center/cover no-repeat;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -269,7 +269,7 @@
     }
     .hero-right {
       width: 60vw;
-      background: url('Image/background.png') center/cover no-repeat;
+      background: url('Image/background02.png') center/cover no-repeat;
       position: relative;
       display: flex;
       flex-direction: column;
@@ -313,28 +313,65 @@
         margin-left: 0;
       }
     }
+
+    /* Monlu Hero Front Page */
+    .monlu-hero {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: url('Image/background02.png') center/cover no-repeat;
+    }
+
+    .monlu-hero-content {
+      text-align: center;
+      color: #fff;
+    }
+
+    .monlu-main-title {
+      font-size: calc(4rem + 10px);
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .monlu-main-title .monlu-ch {
+      font-size: calc(5rem + 10px);
+      margin-right: 10px;
+    }
+
+    .monlu-main-title .monlu-en {
+      font-size: calc(1.5rem + 10px);
+      margin-top: 10px;
+    }
+
+    .monlu-subtitle {
+      font-size: calc(1.2rem + 10px);
+      margin-bottom: 10px;
+    }
+
+    .monlu-tags {
+      font-size: calc(1rem + 10px);
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
-  <div class="hero-split">
-    <aside class="hero-vertical-nav">
-      <nav>
-        <a href="#home">HOME</a>
-        <a href="#results">RESULTS</a>
-        <a href="#what-is-forex">WHAT IS FOREX</a>
-        <a href="#about">ABOUT</a>
-      </nav>
-    </aside>
-    <section class="hero-left">
-      <div class="hero-title">
-        <span class="take">AHJOHN</span><br>
-        <!-- <span class="control">CONTROL</span> -->
+  <!-- Monlu Hero Front Page -->
+  <div class="monlu-hero">
+    <div class="monlu-hero-content">
+      <div class="monlu-main-title">
+        <span class="monlu-ch">AHJOHN</span>
+        <div class="monlu-en">
+          MONLU<br>
+          PHOTOGRAPHY<br>
+          STUDIO
+        </div>
       </div>
-      <div class="hero-subtitle">HONG KONG PHOTOGRAPHER</div>
-      <!-- <div class="hero-desc">FOREX TRADERS</div> -->
-    </section>
-    <section class="hero-right">
-    </section>
+      <!-- <div class="monlu-subtitle">形象設計工作室</div> -->
+      <div class="monlu-tags">
+        商業攝影　｜　美食攝影　｜　餐飲形象設計　｜　廣告設計
+      </div>
+    </div>
   </div>
 
   <!-- Navigation -->
@@ -343,6 +380,7 @@
     <a href="#3d-modeling">3D Modeling</a>
     <a href="#uxui">UXUI Design</a>
     <a href="#generative-ai">Generative AI</a>
+    <a href="#mood-shooting">Mood Shooting</a>
     <a href="#about">About Me</a>
   </nav>
 
@@ -418,6 +456,17 @@
     </div>
   </section>
 
+  <!-- Mood Shooting Section -->
+  <section id="mood-shooting">
+    <h2>Mood Shooting</h2>
+    <div class="gallery">
+      <img src="https://via.placeholder.com/300x200.png?text=Mood+1" alt="Mood 1">
+      <img src="https://via.placeholder.com/300x200.png?text=Mood+2" alt="Mood 2">
+      <img src="https://via.placeholder.com/300x200.png?text=Mood+3" alt="Mood 3">
+      <img src="https://via.placeholder.com/300x200.png?text=Mood+4" alt="Mood 4">
+    </div>
+  </section>
+
   <!-- About Me Section -->
   <section id="about">
     <h2>About Me</h2>
@@ -449,5 +498,6 @@
       });
     });
   </script>
+  <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
 </body>
 </html>
